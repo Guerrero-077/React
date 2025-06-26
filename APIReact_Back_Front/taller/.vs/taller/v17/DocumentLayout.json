@@ -1,0 +1,126 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\braya\\OneDrive\\Desktop\\Trabajos-2025\\Talle_Jwt\\taller\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{CF4242B4-10C7-4ACC-8E10-40541D901A92}|Web\\Web.csproj|c:\\users\\braya\\onedrive\\desktop\\trabajos-2025\\talle_jwt\\taller\\web\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{CF4242B4-10C7-4ACC-8E10-40541D901A92}|Web\\Web.csproj|solutionrelative:web\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CF4242B4-10C7-4ACC-8E10-40541D901A92}|Web\\Web.csproj|c:\\users\\braya\\onedrive\\desktop\\trabajos-2025\\talle_jwt\\taller\\web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{CF4242B4-10C7-4ACC-8E10-40541D901A92}|Web\\Web.csproj|solutionrelative:web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D032F13E-EA7C-47A0-91A8-56971FBBE030}|Entity\\Entity.csproj|c:\\users\\braya\\onedrive\\desktop\\trabajos-2025\\talle_jwt\\taller\\entity\\migrations\\20250625233813_first.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D032F13E-EA7C-47A0-91A8-56971FBBE030}|Entity\\Entity.csproj|solutionrelative:entity\\migrations\\20250625233813_first.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D032F13E-EA7C-47A0-91A8-56971FBBE030}|Entity\\Entity.csproj|c:\\users\\braya\\onedrive\\desktop\\trabajos-2025\\talle_jwt\\taller\\entity\\contexts\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D032F13E-EA7C-47A0-91A8-56971FBBE030}|Entity\\Entity.csproj|solutionrelative:entity\\contexts\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CF4242B4-10C7-4ACC-8E10-40541D901A92}|Web\\Web.csproj|c:\\users\\braya\\onedrive\\desktop\\trabajos-2025\\talle_jwt\\taller\\web\\controllers\\rolcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CF4242B4-10C7-4ACC-8E10-40541D901A92}|Web\\Web.csproj|solutionrelative:web\\controllers\\rolcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CF4242B4-10C7-4ACC-8E10-40541D901A92}|Web\\Web.csproj|c:\\users\\braya\\onedrive\\desktop\\trabajos-2025\\talle_jwt\\taller\\web\\controllers\\logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CF4242B4-10C7-4ACC-8E10-40541D901A92}|Web\\Web.csproj|solutionrelative:web\\controllers\\logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\braya\\OneDrive\\Desktop\\Trabajos-2025\\Talle_Jwt\\taller\\Web\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "Web\\Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\braya\\OneDrive\\Desktop\\Trabajos-2025\\Talle_Jwt\\taller\\Web\\Properties\\launchSettings.json",
+              "RelativeToolTip": "Web\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-06-26T01:19:51.421Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\braya\\OneDrive\\Desktop\\Trabajos-2025\\Talle_Jwt\\taller\\Web\\appsettings.json",
+              "RelativeDocumentMoniker": "Web\\appsettings.json",
+              "ToolTip": "C:\\Users\\braya\\OneDrive\\Desktop\\Trabajos-2025\\Talle_Jwt\\taller\\Web\\appsettings.json",
+              "RelativeToolTip": "Web\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-06-26T01:19:47.488Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "20250625233813_first.cs",
+              "DocumentMoniker": "C:\\Users\\braya\\OneDrive\\Desktop\\Trabajos-2025\\Talle_Jwt\\taller\\Entity\\Migrations\\20250625233813_first.cs",
+              "RelativeDocumentMoniker": "Entity\\Migrations\\20250625233813_first.cs",
+              "ToolTip": "C:\\Users\\braya\\OneDrive\\Desktop\\Trabajos-2025\\Talle_Jwt\\taller\\Entity\\Migrations\\20250625233813_first.cs",
+              "RelativeToolTip": "Entity\\Migrations\\20250625233813_first.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-25T23:38:13.754Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\braya\\OneDrive\\Desktop\\Trabajos-2025\\Talle_Jwt\\taller\\Entity\\Contexts\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "Entity\\Contexts\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\Users\\braya\\OneDrive\\Desktop\\Trabajos-2025\\Talle_Jwt\\taller\\Entity\\Contexts\\ApplicationDbContext.cs",
+              "RelativeToolTip": "Entity\\Contexts\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-25T23:38:04.384Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "RolController.cs",
+              "DocumentMoniker": "C:\\Users\\braya\\OneDrive\\Desktop\\Trabajos-2025\\Talle_Jwt\\taller\\Web\\Controllers\\RolController.cs",
+              "RelativeDocumentMoniker": "Web\\Controllers\\RolController.cs",
+              "ToolTip": "C:\\Users\\braya\\OneDrive\\Desktop\\Trabajos-2025\\Talle_Jwt\\taller\\Web\\Controllers\\RolController.cs",
+              "RelativeToolTip": "Web\\Controllers\\RolController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-25T20:39:51.963Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "LoginController.cs",
+              "DocumentMoniker": "C:\\Users\\braya\\OneDrive\\Desktop\\Trabajos-2025\\Talle_Jwt\\taller\\Web\\Controllers\\LoginController.cs",
+              "RelativeDocumentMoniker": "Web\\Controllers\\LoginController.cs",
+              "ToolTip": "C:\\Users\\braya\\OneDrive\\Desktop\\Trabajos-2025\\Talle_Jwt\\taller\\Web\\Controllers\\LoginController.cs",
+              "RelativeToolTip": "Web\\Controllers\\LoginController.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAHoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T22:50:49.521Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
