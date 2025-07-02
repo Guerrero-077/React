@@ -54,3 +54,15 @@ C:\Users\braya\OneDrive\Desktop\Trabajos-2025\Talle_Jwt\taller\Utilities\obj\Deb
 C:\Users\braya\OneDrive\Desktop\Trabajos-2025\Talle_Jwt\taller\Utilities\obj\Debug\net8.0\refint\Utilities.dll
 C:\Users\braya\OneDrive\Desktop\Trabajos-2025\Talle_Jwt\taller\Utilities\obj\Debug\net8.0\Utilities.pdb
 C:\Users\braya\OneDrive\Desktop\Trabajos-2025\Talle_Jwt\taller\Utilities\obj\Debug\net8.0\ref\Utilities.dll
+C:\Users\braya\OneDrive\Desktop\Trabajos-2025\React\APIReact_Back_Front\taller\Utilities\bin\Debug\net8.0\Utilities.deps.json
+C:\Users\braya\OneDrive\Desktop\Trabajos-2025\React\APIReact_Back_Front\taller\Utilities\bin\Debug\net8.0\Utilities.dll
+C:\Users\braya\OneDrive\Desktop\Trabajos-2025\React\APIReact_Back_Front\taller\Utilities\bin\Debug\net8.0\Utilities.pdb
+C:\Users\braya\OneDrive\Desktop\Trabajos-2025\React\APIReact_Back_Front\taller\Utilities\obj\Debug\net8.0\Utilities.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\braya\OneDrive\Desktop\Trabajos-2025\React\APIReact_Back_Front\taller\Utilities\obj\Debug\net8.0\Utilities.AssemblyInfoInputs.cache
+C:\Users\braya\OneDrive\Desktop\Trabajos-2025\React\APIReact_Back_Front\taller\Utilities\obj\Debug\net8.0\Utilities.AssemblyInfo.cs
+C:\Users\braya\OneDrive\Desktop\Trabajos-2025\React\APIReact_Back_Front\taller\Utilities\obj\Debug\net8.0\Utilities.csproj.CoreCompileInputs.cache
+C:\Users\braya\OneDrive\Desktop\Trabajos-2025\React\APIReact_Back_Front\taller\Utilities\obj\Debug\net8.0\Utilities.sourcelink.json
+C:\Users\braya\OneDrive\Desktop\Trabajos-2025\React\APIReact_Back_Front\taller\Utilities\obj\Debug\net8.0\Utilities.dll
+C:\Users\braya\OneDrive\Desktop\Trabajos-2025\React\APIReact_Back_Front\taller\Utilities\obj\Debug\net8.0\refint\Utilities.dll
+C:\Users\braya\OneDrive\Desktop\Trabajos-2025\React\APIReact_Back_Front\taller\Utilities\obj\Debug\net8.0\Utilities.pdb
+C:\Users\braya\OneDrive\Desktop\Trabajos-2025\React\APIReact_Back_Front\taller\Utilities\obj\Debug\net8.0\ref\Utilities.dll

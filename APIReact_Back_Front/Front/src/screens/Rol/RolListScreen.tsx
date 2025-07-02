@@ -12,15 +12,16 @@ import { rolService } from "../../api/services/rolService";
 import GenericCard from "../../components/GenericCard";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { BooktackParamsList } from "../../navigations/types";
+import FloatingActionButton from "../../components/FloatingActionButton";
+import { RolParamsList } from "../../navigations/types";
+import Loader from "../../components/Loader";
 
 export default function RolListScreen() {
   const [roles, setRoles] = useState<IRol[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const isFocused = useIsFocused(); // ✅ detecta si la pantalla está activa
 
-  const navigation =
-    useNavigation<NativeStackNavigationProp<BooktackParamsList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<RolParamsList>>();
 
   const loadRoles = async () => {
     try {
@@ -63,13 +64,7 @@ export default function RolListScreen() {
   };
 
   if (loading) {
-    return (
-      <ActivityIndicator
-        size="large"
-        color="purple"
-        style={{ flex: 1, justifyContent: "center" }}
-      />
-    );
+    return <Loader />;
   }
 
   return (
@@ -87,11 +82,31 @@ export default function RolListScreen() {
           />
         )}
       />
+
+      {/* Boton flotante */}
+
+      <FloatingActionButton
+        onPress={() => navigation.navigate("RolRegister")}
+        iconName="add"
+        backgroundColor="#4a90e2"
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, flex: 1 },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 10 },
+  container: {
+    flex: 1,
+    backgroundColor: "#f7f9fc",
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 0,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "600",
+    color: "#2c3e50",
+    marginBottom: 16,
+    textAlign: "center",
+  },
 });

@@ -9,15 +9,17 @@ import {
 } from "react-native";
 import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { BooktackParamsList } from "../../navigations/types";
+import { RolParamsList } from "../../navigations/types";
 import { IRol } from "../../api/types/IRol";
 import { rolService } from "../../api/services/rolService";
 import BookForm from "../../components/RolForm";
+import GenericForm from "../../components/GenericForm";
+import { rolFields } from "../../constants/Form/rolFormFields";
 
-type UpdateRouteProp = RouteProp<BooktackParamsList, "RolUpdate">;
-type NavigationProp = NativeStackNavigationProp<BooktackParamsList>;
+type UpdateRouteProp = RouteProp<RolParamsList, "RolUpdate">;
+type NavigationProp = NativeStackNavigationProp<RolParamsList>;
 
-const BookUpdateScreen = () => {
+const RolUpdateScreen = () => {
   const route = useRoute<UpdateRouteProp>();
   const navigation = useNavigation<NavigationProp>();
   const { id } = route.params;
@@ -74,8 +76,8 @@ const BookUpdateScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Editar Rol</Text>
-      <BookForm form={form} handleChange={handleChange} />
-      <Button title="Actualizar" onPress={handleUpdate} />
+      <GenericForm form={form} fields={rolFields} onChange={handleChange} />
+      <Button title="Update" onPress={handleUpdate} />
     </View>
   );
 };
@@ -85,4 +87,4 @@ const styles = StyleSheet.create({
   title: { fontSize: 28, textAlign: "center", marginBottom: 20 },
 });
 
-export default BookUpdateScreen;
+export default RolUpdateScreen;

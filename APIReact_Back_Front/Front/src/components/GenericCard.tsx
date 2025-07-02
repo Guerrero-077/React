@@ -1,120 +1,112 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Platform,
+  Image,
+} from "react-native";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 
-interface GenericCardProps {
-  title?: string;
+interface Props {
+  title: string;
   subtitle?: string;
-  children?: React.ReactNode;
+  imageUrl?: string | number; // opcional
   onEdit?: () => void;
   onDelete?: () => void;
 }
 
-export default function GenericCard({
+const GenericCard: React.FC<Props> = ({
   title,
   subtitle,
-  children,
+  imageUrl,
   onEdit,
   onDelete,
-}: GenericCardProps) {
+}) => {
+  const renderImage = () => {
+    if (!imageUrl) return null;
+
+    const source = typeof imageUrl === "string" ? { uri: imageUrl } : imageUrl;
+
+    return <Image source={source} style={styles.image} resizeMode="cover" />;
+  };
+
   return (
     <View style={styles.card}>
-      <View style={styles.cardContent}>
-        {title && (
-          <Text style={styles.title} numberOfLines={2}>
-            {title}
-          </Text>
-        )}
-        {subtitle && (
-          <Text style={styles.subtitle} numberOfLines={1}>
-            {subtitle}
-          </Text>
-        )}
+      {renderImage()}
 
-        {children && <View style={styles.content}>{children}</View>}
+      <View style={styles.textContainer}>
+        <Text style={styles.title}>{title}</Text>
+        {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
       </View>
 
-      {(onEdit || onDelete) && (
-        <View style={styles.actions}>
-          {onEdit && (
-            <TouchableOpacity
-              style={[styles.button, styles.editButton]}
-              onPress={onEdit}
-              hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }} // Área táctil aumentada
-            >
-              <Text style={styles.buttonText}>Editar</Text>
-            </TouchableOpacity>
-          )}
-          {onDelete && (
-            <TouchableOpacity
-              style={[styles.button, styles.deleteButton]}
-              onPress={onDelete}
-              hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
-            >
-              <Text style={styles.buttonText}>Eliminar</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      )}
+      <View style={styles.actions}>
+        {onEdit && (
+          <TouchableOpacity onPress={onEdit} style={styles.iconButton}>
+            <Feather name="edit" size={22} color="#4a90e2" />
+          </TouchableOpacity>
+        )}
+        {onDelete && (
+          <TouchableOpacity onPress={onDelete} style={styles.iconButton}>
+            <MaterialIcons name="delete-outline" size={24} color="#e74c3c" />
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   card: {
-    padding: 12,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    borderRadius: 8,
-    marginBottom: 12,
     backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-    width: "100%",
+    padding: 12,
+    marginVertical: 8,
+    borderRadius: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    gap: 12,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
-  cardContent: {
+  image: {
+    width: 50,
+    height: 50,
+    borderRadius: 15,
+    backgroundColor: "#eee",
+  },
+  textContainer: {
     flex: 1,
+    gap: 4,
   },
   title: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: "600",
-    color: "#333",
-    marginBottom: 4,
+    color: "#2c3e50",
   },
   subtitle: {
-    fontSize: 13,
-    color: "#666",
-    marginBottom: 6,
-  },
-  content: {
-    marginVertical: 8,
+    fontSize: 14,
+    color: "#7f8c8d",
   },
   actions: {
     flexDirection: "row",
-    justifyContent: "flex-end",
-    marginTop: 10,
-    gap: 8, // Espacio consistente entre botones
-  },
-  button: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    minHeight: 32, // Altura mínima para buena interacción táctil
     alignItems: "center",
-    justifyContent: "center",
+    marginLeft: 8,
   },
-  editButton: {
-    backgroundColor: "#4CAF50",
-  },
-  deleteButton: {
-    backgroundColor: "#f44336",
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "500",
-    fontSize: 13,
-    includeFontPadding: false, // Mejor alineación vertical
+  iconButton: {
+    marginHorizontal: 4,
+    padding: 4,
   },
 });
+
+export default GenericCard;
