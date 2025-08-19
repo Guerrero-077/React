@@ -1,25 +1,15 @@
-import { httpClient } from "../httpClient";
-import { IUser } from "../types/IUser";
-const RESOURCE = "/User";
+import { httpClient } from "../interceptor/httpClient";
+import { CreateUserDTO, UserDTO } from "../types/IUser";
+import { createGenericService } from "./generic-service/genericService";
 
-export const userService = {
-    getAll: async (): Promise<IUser[]> => {
-        return await httpClient.get<IUser[]>(RESOURCE);
-    },
 
-    getById: async (id: number): Promise<IUser> => {
-        return await httpClient.get<IUser>(`${RESOURCE}/${id}`);
-    },
+export const userService =
+{
 
-    create: async (rol: IUser): Promise<IUser> => {
-        return await httpClient.post<IUser>(RESOURCE, rol);
-    },
+    ...createGenericService<UserDTO, CreateUserDTO>("/users"),
 
-    update: async (rol: IUser): Promise<IUser> => {
-        return await httpClient.put<IUser>(RESOURCE, rol);
-    },
-
-    delete: async (id: number): Promise<void> => {
-        await httpClient.delete(`${RESOURCE}/${id}`);
-    },
-};
+        // Método extra:
+        getAllDynamic: async (): Promise<UserDTO[]> => {
+            return await httpClient.get<UserDTO[]>("/users/dynamic");
+        },
+}

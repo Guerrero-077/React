@@ -1,5 +1,5 @@
 ﻿using Business.Custom;
-using Business.Interfaces;
+using Business.Interfaces.IJWT;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;

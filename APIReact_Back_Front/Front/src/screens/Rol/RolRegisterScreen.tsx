@@ -1,74 +1,72 @@
 import React, { useState } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
-import GenericForm from "../../components/GenericForm";
-import { IRol } from "../../api/types/IRol";
-import { rolService } from "../../api/services/rolService";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { rolFields } from "../../constants/Form/rolFormFields";
-import Toast from "react-native-toast-message";
+
+import { IRol } from "../../api/types/IRol";
+import { rolService } from "../../api/services/rolService";
 import { RolParamsList } from "../../navigations/types";
+import { rolFields } from "../../constants/Form/rolFormFields";
 import { FieldDefinition } from "../../components/types/FieldDefinition";
+
+import GenericForm from "../../components/generic-form/GenericForm";
+import { showToast } from "../../components/util/toastHelper";
+import FormActionButtons from "../../components/generic-buttons/FormActionButtons";
 
 const RolRegisterScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RolParamsList>>();
 
-  const [form, setForm] = useState<IRol>({
+  const [rol, setRol] = useState<IRol>({
     id: 0,
     name: "",
     description: "",
   });
 
   const handleChange = (key: keyof IRol, value: string) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
+    setRol((prev) => ({ ...prev, [key]: value }));
   };
 
-  const validateForm = (): boolean => {
+  const validateRol = (): boolean => {
     for (const field of rolFields as FieldDefinition<IRol>[]) {
-      const value = String(form[field.key] ?? "").trim();
-
+      const value = String(rol[field.key] ?? "").trim();
       if (field.required && !value) {
-        Toast.show({
-          type: "error",
-          text1: "Required field",
-          text2: `The "${field.label}" field is required.`,
-        });
+        showToast.validation(field.label);
         return false;
       }
     }
-
     return true;
   };
 
-  const registerBook = async () => {
-    if (!validateForm()) return;
+  const handleCreate = async () => {
+    if (!validateRol()) return;
 
     try {
-      await rolService.create(form);
-
-      Toast.show({
-        type: "success",
-        text1: "Created role",
-        text2: "The role was registered successfully",
-      });
-
-      navigation.navigate("RolList");
+      await rolService.create(rol);
+      showToast.success(
+        "Rol created",
+        "The rol has been registered successfully."
+      );
+      navigation.replace("RolList");
     } catch (error) {
-      console.error("Error creating role:", error);
-
-      Toast.show({
-        type: "error",
-        text1: "Error registering",
-        text2: "Please check the data and try again.",
-      });
+      console.error("Error creating rol:", error);
+      showToast.error(
+        "Creation failed",
+        "Please check the input data and try again."
+      );
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Registrar Rol</Text>
-      <GenericForm form={form} fields={rolFields} onChange={handleChange} />
-      <Button title="Save" onPress={registerBook} />
+      <Text style={styles.title}>Create Rol</Text>
+      <GenericForm form={rol} fields={rolFields} onChange={handleChange} />
+
+      <FormActionButtons
+        onSubmit={handleCreate}
+        onCancel={() => navigation.goBack()}
+        submitLabel="Create"
+        cancelLabel="Cancel"
+      />
     </View>
   );
 };

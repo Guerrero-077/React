@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Entity.Domain.Interfaces;
+using Entity.DTOs.Base;
 
 namespace Entity.DTOs.Default
 {
-    public class PersonDto
+    public class PersonDto : BaseDto
     {
-        public int id { get; set; }
-        public string first_name { get; set; }
-        public string last_name { get; set; }
-        public string phone_number { get; set; }
-        public bool active { get; set; }
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string phoneNumber { get; set; }
+        public string address { get; set; }
     }
 }

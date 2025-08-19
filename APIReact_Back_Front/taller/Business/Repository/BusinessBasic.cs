@@ -1,62 +1,257 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
-using Business.Interfaces;
-using Data.Interfaces;
+﻿using AutoMapper;
+using Business.Strategy.StrategyDeletes.Implement;
+using Business.Strategy.StrategyGet.Implement;
+using Data.Interfaces.DataBasic;
+using Entity.Domain.Enums;
+using Entity.Domain.Models.Base;
+using Entity.DTOs.Base;
+using Helpers.Business.Business.Helpers.Validation;
+using Helpers.Initialize;
+using System.Dynamic;
+using Utilities.Exceptions;
 
 namespace Business.Repository
 {
-    public abstract class BusinessBasic<TDto, TEntity> : IBusiness<TDto> where TEntity : class
+    /// <summary>
+    /// Clase base abstracta que implementa operaciones CRUD avanzadas con:
+    /// - Mapeo DTO-Entidad mediante AutoMapper
+    /// - Soporte para estrategias de obtención y eliminación
+    /// - Manejo de eliminación lógica y restauración
+    /// - Validaciones básicas integradas
+    /// </summary>
+    /// <typeparam name="TDto">Tipo del DTO para operaciones de creación/actualización</typeparam>
+    /// <typeparam name="TDtoGet">Tipo del DTO para operaciones de consulta</typeparam>
+    /// <typeparam name="TEntity">Tipo de la entidad de dominio/persistencia</typeparam>
+    public class BusinessBasic<D, TEntity> : ABaseModelBusiness<D, TEntity> where TEntity : BaseModel where D : BaseDto
     {
-        protected readonly IData<TEntity> _data;
         protected readonly IMapper _mapper;
+        protected readonly IData<TEntity> Data;
 
-        public BusinessBasic(IData<TEntity> data, IMapper mapper) 
+        /// <summary>
+        /// Constructor que inicializa las dependencias principales
+        /// </summary>
+        /// <param name="data">Repositorio de datos para la entidad TEntity</param>
+        /// <param name="mapper">Instancia de AutoMapper para transformaciones DTO-Entidad</param>
+        public BusinessBasic(IData<TEntity> data, IMapper mapper)
         {
-            _data = data;
-            _mapper = mapper;   
+            Data = data ?? throw new ArgumentNullException(nameof(data));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<IEnumerable<TDto>> GetAllAsync()
+        /// <summary>
+        /// Obtiene todos los registros no eliminados (activos) de la entidad
+        /// </summary>
+        /// <returns>
+        /// Colección de DTOs de consulta (D) mapeados desde las entidades
+        /// </returns>
+        /// <exception cref="BusinessException">Error durante la operación de base de datos</exception>
+        public override async Task<IEnumerable<D>> GetAllAsync()
         {
-            var entities = await _data.GetAllAsync();
-            return _mapper.Map<IEnumerable<TDto>>(entities);
+            try
+            {
+                var entities = await Data.GetAllAsync();
+                return _mapper.Map<IEnumerable<D>>(entities);
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Error al obtener todos los registros.", ex);
+            }
         }
 
-        public async Task<TDto?> GetByIdAsync(int id)
+        /// <summary>
+        /// Obtiene registros aplicando una estrategia de filtrado específica
+        /// </summary>
+        /// <param name="getAllType">Estrategia de filtrado a aplicar (enum GetAllType)</param>
+        /// <returns>
+        /// Colección filtrada de DTOs según la estrategia especificada
+        /// </returns>
+        /// <exception cref="BusinessException">Error durante la operación o estrategia no soportada</exception>
+        public override async Task<IEnumerable<D>> GetAllAsync(GetAllType getAllType)
         {
-            await ValidateIdAsync(id);
-            var entity = await _data.GetByIdAsync(id);
-            return entity == null ? default : _mapper.Map<TDto>(entity);
+            try
+            {
+                var strategy = GetStrategyFactory.GetStrategyGet<TEntity>(Data, getAllType);
+                var entities = await strategy.GetAll(Data);
+                return _mapper.Map<IEnumerable<D>>(entities);
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException($"Error al obtener registros con estrategia {getAllType}.", ex);
+            }
         }
 
-        public async Task<TDto> CreateAsync(TDto dto)
+        /// <summary>
+        /// Obtiene un registro específico por su identificador
+        /// </summary>
+        /// <param name="id">Identificador único del registro (mayor que 0)</param>
+        /// <returns>
+        /// DTO de consulta (D) o null si no se encuentra el registro
+        /// </returns>
+        /// <exception cref="InvalidOperationException">Cuando el ID es inválido (≤ 0)</exception>
+        /// <exception cref="BusinessException">Error durante la operación de base de datos</exception>
+        public override async Task<D?> GetByIdAsync(int id)
         {
-            ValidateDto(dto);
-            var entity = _mapper.Map<TEntity>(dto);
-            var created = await _data.CreateAsync(entity);
-            return  _mapper.Map<TDto>(created);
+            try
+            {
+                BusinessValidationHelper.ThrowIfZeroOrLess(id, "El ID debe ser mayor que cero.");
+
+                var entity = await Data.GetByIdAsync(id);
+                return entity == null ? default : _mapper.Map<D>(entity);
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException($"Error al obtener el registro con ID {id}.", ex);
+            }
         }
 
-        public async Task<bool> UpdateAsync(TDto dto)
+        /// <summary>
+        /// Crea un nuevo registro en el sistema
+        /// </summary>
+        /// <param name="dto">DTO con los datos para la creación</param>
+        /// <returns>
+        /// DTO de creación/actualización (D) con los datos del registro creado
+        /// </returns>
+        /// <exception cref="InvalidOperationException">Cuando el DTO es nulo o no pasa validaciones</exception>
+        /// <exception cref="BusinessException">Error durante la operación de base de datos</exception>
+        public override async Task<D> CreateAsync(D dto)
         {
-            ValidateDto(dto);
-            var entity = _mapper.Map<TEntity>(dto);
-            return await _data.UpdateAsync(entity);
+            try
+            {
+                BusinessValidationHelper.ThrowIfNull(dto, "El DTO no puede ser nulo.");
+
+                var entity = _mapper.Map<TEntity>(dto);
+                InitializeLogical.InitializeLogicalState(entity); // Inicializa estado lógico (is_deleted = false)
+
+                var created = await Data.CreateAsync(entity);
+                return _mapper.Map<D>(created);
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Error al crear el registro.", ex);
+            }
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        /// <summary>
+        /// Actualiza un registro existente
+        /// </summary>
+        /// <param name="dto">DTO con los datos actualizados</param>
+        /// <returns>
+        /// True si la actualización fue exitosa, False si no se encontró el registro
+        /// </returns>
+        /// <exception cref="InvalidOperationException">Cuando el DTO es nulo o no pasa validaciones</exception>
+        /// <exception cref="BusinessException">Error durante la operación de base de datos</exception>
+        public override async Task<bool> UpdateAsync(D dto)
         {
-            await ValidateIdAsync(id);
-            return await _data.DeleteAsync(id);
+            try
+            {
+                BusinessValidationHelper.ThrowIfNull(dto, "El DTO no puede ser nulo.");
+
+                var entity = _mapper.Map<TEntity>(dto);
+                InitializeLogical.InitializeLogicalState(entity); // Inicializa estado lógico (is_deleted = false)
+
+                return await Data.UpdateAsync(entity);
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException($"Error al actualizar el registro: {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// Elimina físicamente un registro de la base de datos
+        /// </summary>
+        /// <param name="id">Identificador único del registro (mayor que 0)</param>
+        /// <returns>
+        /// True si la eliminación fue exitosa, False si no se encontró el registro
+        /// </returns>
+        /// <exception cref="InvalidOperationException">Cuando el ID es inválido (≤ 0)</exception>
+        /// <exception cref="BusinessException">Error durante la operación de base de datos</exception>
+        public override async Task<bool> DeleteAsync(int id)
+        {
+            try
+            {
+                BusinessValidationHelper.ThrowIfZeroOrLess(id, "El ID debe ser mayor que cero.");
+                return await Data.DeleteAsync(id);
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException($"Error al eliminar el registro con ID {id}.", ex);
+            }
+        }
+
+        /// <summary>
+        /// Elimina un registro aplicando una estrategia específica (física/lógica)
+        /// </summary>
+        /// <param name="id">Identificador único del registro (mayor que 0)</param>
+        /// <param name="deleteType">Tipo de estrategia de eliminación (enum DeleteType)</param>
+        /// <returns>
+        /// True si la eliminación fue exitosa, False si no se encontró el registro
+        /// </returns>
+        /// <exception cref="InvalidOperationException">Cuando el ID es inválido (≤ 0)</exception>
+        /// <exception cref="BusinessException">Error durante la operación o estrategia no soportada</exception>
+        public override async Task<bool> DeleteAsync(int id, DeleteType deleteType)
+        {
+            try
+            {
+                BusinessValidationHelper.ThrowIfZeroOrLess(id, "El ID debe ser mayor que cero.");
+
+                var strategy = DeleteStrategyFactory.GetStrategy<TEntity>(Data, deleteType);
+                return await strategy.DeleteAsync(id, Data);
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException($"Error al eliminar registro (ID: {id}) con estrategia {deleteType}.", ex);
+            }
+        }
+
+        /// <summary>
+        /// Restaura un registro que fue eliminado lógicamente (is_deleted = true)
+        /// </summary>
+        /// <param name="id">Identificador único del registro (mayor que 0)</param>
+        /// <returns>
+        /// True si la restauración fue exitosa, False si no se encontró el registro
+        /// </returns>
+        /// <exception cref="InvalidOperationException">Cuando el ID es inválido (≤ 0)</exception>
+        /// <exception cref="BusinessException">Error durante la operación de base de datos</exception>
+        public override async Task<bool> RestoreLogical(int id)
+        {
+            try
+            {
+                BusinessValidationHelper.ThrowIfZeroOrLess(id, "El ID debe ser mayor que cero.");
+
+                return await Data.RestoreAsync(id);
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException($"Error al restaurar el registro con ID {id}.", ex);
+            }
+        }
+
+
+        /// <summary>
+        /// Obtener listado con relaciones dinámicas (passthrough)
+        /// </summary>
+        /// <returns>Lista de ExpandoObject</returns>
+        public override async Task<List<ExpandoObject>> GetAllDynamicAsync()
+        {
+            return await Data.GetAllDynamicAsync();
         }
 
 
 
-        protected abstract void ValidateDto(TDto dto);
-        protected abstract Task ValidateIdAsync(int id);
+
+        ///// <summary>
+        ///// Método abstracto para validaciones específicas del DTO
+        ///// </summary>
+        ///// <param name="dto">DTO a validar</param>
+        ///// <exception cref="InvalidOperationException">Cuando el DTO no cumple con las reglas de validación</exception>
+        //protected abstract void ValidateDto(TDto dto);
+
+        ///// <summary>
+        ///// Método abstracto para validaciones específicas del ID
+        ///// </summary>
+        ///// <param name="id">Identificador a validar</param>
+        ///// <exception cref="InvalidOperationException">Cuando el ID no cumple con las reglas de validación</exception>
+        //protected abstract Task ValidateIdAsync(int id);
     }
 }

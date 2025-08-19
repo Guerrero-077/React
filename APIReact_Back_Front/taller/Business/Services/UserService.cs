@@ -1,93 +1,127 @@
 ﻿using AutoMapper;
+using Business.Interfaces.IBusinessImplements;
 using Business.Repository;
-using Data.Interfaces;
+using Data.Interfaces.IDataImplement;
+using Entity.Domain.Models.Implements;
 using Entity.DTOs.Default;
-using Entity.Models;
+using Helpers.Business.Business.Helpers.Validation;
+using Helpers.Initialize;
 using Microsoft.Extensions.Logging;
 using Utilities.Custom;
-using Utilities.Exceptions;
 
 namespace Business.Services
 {
-    public class UserService : BusinessBasic<UserDto, User>
+    public class UserService : BusinessBasic<UserDto, User>, IUserService
     {
         private readonly IUserRepository _dataUser;
         private readonly ILogger<UserService> _logger;
         private readonly EncriptePassword _utilities;
 
-        public UserService(IUserRepository data, ILogger<UserService> logger, EncriptePassword utilities, IMapper mapper) : base(data, mapper)
+        private readonly IRolUserService _rolUserService;
+
+        //private readonly IPublishEndpoint _publishEndpoint;
+
+        //protected override IData<User> Data => _unitOfWork.Users;
+
+        public UserService(IUserRepository data, ILogger<UserService> logger, EncriptePassword utilities, IMapper mapper, IRolUserService rolUserService) : base(data, mapper)
         {
             _dataUser = data;
-            _logger = logger;
             _utilities = utilities;
-
+            _logger = logger;
+            _rolUserService = rolUserService;
         }
 
-        protected override void ValidateDto(UserDto dto)
-        {
-            if (dto == null)
-            {
-                throw new ValidationException("El objeto Rol no puede ser nulo");
-            }
+        //public UserService(IUnitOfWork unitOfWork, ILogger<UserService> logger, IMapper mapper): base(unitOfWork, mapper) 
+        //{
+        //    _logger = logger;
+        //}
 
-        }
+        //protected override void ValidateDto(UserDto dto)
+        //{
+        //    if (dto == null)
+        //    {
+        //        throw new ValidationException("El objeto Rol no puede ser nulo");
+        //    }
 
-        protected async override Task ValidateIdAsync(int id)
-        {
-            var entity = await _data.GetByIdAsync(id);
-            if (entity == null)
-            {
-                _logger.LogWarning($"Se intentó operar con un ID inválido: {id}");
-                throw new EntityNotFoundException($"No se encontró una Rol con el ID {id}");
-            }
+        //}
 
-        }
+        //protected async override Task ValidateIdAsync(int id)
+        //{
+        //    var entity = await _dataUser.GetByIdAsync(id);
+        //    if (entity == null)
+        //    {
+        //        _logger.LogWarning($"Se intentó operar con un ID inválido: {id}");
+        //        throw new EntityNotFoundException($"No se encontró una Rol con el ID {id}");
+        //    }
+
+        //}
 
         //Nuevo metodo 
 
-        public async Task<UserDto> CreateAsyncUser(UserDto dto)
-        {
-            ValidateDto(dto);
+            public async Task<UserDto> CreateAsyncUser(UserDto dto)
+            {
+                BusinessValidationHelper.ThrowIfNull(dto, "El DTO no puede ser nulo.");
 
-            // Mapeamos primero
-            var userEntity = _mapper.Map<User>(dto);
+                // Mapeamos primero
+                var userEntity = _mapper.Map<User>(dto);
+                InitializeLogical.InitializeLogicalState(userEntity); // Inicializa estado lógico (is_deleted = false)
+                                                              // Inicializa estado lógico (is_deleted = false)
+            var createdEntity = await _dataUser.CreateAsync(userEntity);
 
-            // Luego encripto la contraseña antes de guardar
-            //userEntity.password = _utilities.EncripteSHA256(userEntity.password);
-            userEntity.password = userEntity.password;
+                _ = _rolUserService.AsignateUserRTo(createdEntity.id);
 
-            var createdEntity = await _data.CreateAsync(userEntity);
-            return _mapper.Map<UserDto>(createdEntity);
-        }
+                return _mapper.Map<UserDto>(createdEntity);
 
-        //Actalizar
-        public async Task<bool> UpdateAsyncUser(UserDto dto)
-        {
-            ValidateDto(dto);
-            var entity = _mapper.Map<User>(dto);
-            //entity.password = _utilities.EncripteSHA256(entity.password);
-            entity.password = entity.password;
+                // Luego encripto la contraseña antes de guardar
+                //userEntity.password = _utilities.EncripteSHA256(userEntity.password);
+                //userEntity.password = userEntity.password;
 
-            return await _data.UpdateAsync(entity);
-        }
+                //// Publicar evento
+                //var @event = new UserCreatedIntegrationEvent
+                //{
+                //    UserId = createdEntity.id,
+                //    Username = createdEntity.name,
+                //    Email = createdEntity.email
+                //};
 
+                //await _publishEndpoint.Publish(@event);
+
+            }
+
+        // Crear
         public async Task<User> createUserGoogle(string email, string name)
         {
             var user = await _dataUser.FindEmail(email);
+
 
             if (user != null) return user;
 
             var newUser = new User
             {
                 name = name,
-                //password = _utilities.EncripteSHA256("hola"),
                 password = null,
                 email = email
             };
-
-            await _data.CreateAsync(newUser);
+            InitializeLogical.InitializeLogicalState(newUser); // Inicializa estado lógico (is_deleted = false)
+                                                              // Inicializa estado lógico (is_deleted = false)
+            await _dataUser.CreateAsync(newUser);
             return newUser;
+
+
+            //password = _utilities.EncripteSHA256("hola"),
         }
 
+        //Actalizar
+        public async Task<bool> UpdateAsyncUser(UserDto dto)
+        {
+            BusinessValidationHelper.ThrowIfNull(dto, "El DTO no puede ser nulo.");
+            var entity = _mapper.Map<User>(dto);
+            return await _dataUser.UpdateAsync(entity);
+            //entity.password = entity.password;
+            //entity.password = _utilities.EncripteSHA256(entity.password);
+        }
+
+
+        
     }
 }

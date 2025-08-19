@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96 d17.13
+VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "Web\Web.csproj", "{CF4242B4-10C7-4ACC-8E10-40541D901A92}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelSecurity", "Web\ModelSecurity.csproj", "{CF4242B4-10C7-4ACC-8E10-40541D901A92}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business", "Business\Business.csproj", "{533419A9-F364-4BDC-B4F5-D1A53620F687}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entity", "Entity\Entity.csproj", "{D032F13E-EA7C-47A0-91A8-56971FBBE030}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "Utilities\Utilities.csproj", "{A508B5D3-D2F4-46A5-8E2E-E4DE2C1594D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.csproj", "{C449EB1F-0AC2-4632-A508-A9459F36A6B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{A508B5D3-D2F4-46A5-8E2E-E4DE2C1594D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A508B5D3-D2F4-46A5-8E2E-E4DE2C1594D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A508B5D3-D2F4-46A5-8E2E-E4DE2C1594D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C449EB1F-0AC2-4632-A508-A9459F36A6B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C449EB1F-0AC2-4632-A508-A9459F36A6B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C449EB1F-0AC2-4632-A508-A9459F36A6B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C449EB1F-0AC2-4632-A508-A9459F36A6B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

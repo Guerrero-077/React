@@ -4,3 +4,8 @@ export interface IRol {
   name: string;
   description: string;
 }
+export interface CreateRolDTO {
+  id: number;
+  name: string;
+  description: string;
+}

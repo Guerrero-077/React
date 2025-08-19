@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Entity.Domain.Interfaces;
+using Entity.DTOs.Base;
 
 namespace Entity.DTOs.Default
 {
-    public class ModuleDto
+    public class ModuleDto : BaseGenericDto
     {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string description { get; set; }
-        //public DateTime createddate { get; set; }
-        public bool active { get; set; }
-        public bool is_deleted { get; set; }
     }
 }

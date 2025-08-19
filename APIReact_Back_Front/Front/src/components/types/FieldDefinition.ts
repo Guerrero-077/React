@@ -1,20 +1,10 @@
-// export type FieldType = "text" | "number" | "textarea" | "email";
-
-// export interface FieldDefinition<T> {
-//     key: keyof T;
-//     label: string;
-//     type: FieldType;
-//     placeholder?: string;
-// }
-
-// src/types/FieldDefinition.ts
 export type FieldType =
   | "text"
   | "number"
   | "email"
   | "password"
   | "multiline"
-  | "select"; // para futuros campos con opciones
+  | "select";
 
 export interface FieldOption {
   label: string;
@@ -27,10 +17,10 @@ export interface FieldDefinition<T> {
   type: FieldType;
   placeholder?: string;
   required?: boolean;
-  keyboardType?: "default" | "numeric" | "email-address";
+  keyboardType?: "default" | "numeric" | "email-address" | "phone-pad";
   secureTextEntry?: boolean;
   multiline?: boolean;
   numberOfLines?: number;
   disabled?: boolean;
-  options?: FieldOption[]; // útil si agregas selects en el futuro
+  options?: FieldOption[];
 }

@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Entity.Domain.Interfaces;
+using Entity.DTOs.Base;
 
 namespace Entity.DTOs.Default
 {
-    public class RolFormPermissionDto
+    public class RolFormPermissionDto : BaseDto
     {
-        public int id { get; set; }
         public int rolid { get; set; }
         public int formid { get; set; }
-        public bool active { get; set; }
         public int permissionid { get; set; }
     }
 }

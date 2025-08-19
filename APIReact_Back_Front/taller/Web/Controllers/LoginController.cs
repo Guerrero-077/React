@@ -1,12 +1,12 @@
-﻿using Business.Interfaces;
-using Business.Services;
-using Entity.Contexts;
+﻿using Business.Interfaces.IBusinessImplements;
+using Business.Interfaces.IJWT;
+using Business.Mensajeria;
+using Business.Mensajeria.Interfaces;
 using Entity.DTOs.Default;
+using Entity.Infrastructure.Contexts;
 using Microsoft.AspNetCore.Mvc;
 using Utilities.Custom;
 using Utilities.Exceptions;
-using Web.Service;
-
 namespace Web.Controllers
 {
     [Route("api/[controller]")]
@@ -18,16 +18,20 @@ namespace Web.Controllers
 
 
         private readonly IToken _token;
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
         private readonly ILogger<LoginController> _logger;
         private readonly EncriptePassword _utilities;
-        
-        public LoginController(EncriptePassword utilities,IToken token, ILogger<LoginController> logger, UserService userService, ApplicationDbContext context, EncriptePassword utilidades)
+        private readonly IServiceEmail _serviceEmail;
+        private readonly INotifyManager _notifyManager;
+
+        public LoginController(EncriptePassword utilities,IToken token, ILogger<LoginController> logger, IUserService userService, ApplicationDbContext context, EncriptePassword utilidades, IServiceEmail serviceEmail, INotifyManager notifyManager)
         {
             _token = token;
             _userService = userService;
             _logger = logger;
             _utilities = utilities;
+            _serviceEmail = serviceEmail;
+            _notifyManager = notifyManager;
         }
 
         [HttpPost]
@@ -59,6 +63,9 @@ namespace Web.Controllers
             try
             {
                 var token = await _token.GenerateToken(login);
+
+                //await _serviceEmail.EnviarEmailBienvenida(login.email);
+                //await _notifyManager.NotifyAsync();
 
                 return StatusCode(StatusCodes.Status200OK, new { isSuccess = true, token });
 

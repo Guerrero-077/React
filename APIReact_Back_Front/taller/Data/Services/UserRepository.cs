@@ -1,8 +1,8 @@
-﻿using Data.Interfaces;
+﻿using Data.Interfaces.IDataImplement;
 using Data.Repositoy;
-using Entity.Contexts;
+using Entity.Domain.Models.Implements;
 using Entity.DTOs.Default;
-using Entity.Models;
+using Entity.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Utilities.Custom;
 
@@ -17,9 +17,11 @@ namespace Data.Services
             _encriptePass = encriptePass;
         }
 
+
+
         public async Task<User?> FindEmail(string email)
         {
-            var user = await _dbSet.Where(u => u.email == email).FirstOrDefaultAsync();
+            var user = await _context.Set<User>().Where(u => u.email == email).FirstOrDefaultAsync();
             return user;
         }
 
@@ -27,7 +29,7 @@ namespace Data.Services
         {
             bool suceeded = false;
 
-            var user = await _dbSet
+            var user = await _context.Set<User>()
                 //.Where(u => 
                 //            u.email == loginDto.email && 
                 //            u.password == (loginDto.password))

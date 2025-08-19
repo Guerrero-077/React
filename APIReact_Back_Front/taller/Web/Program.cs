@@ -1,3 +1,5 @@
+using Web.Extensions;
+using Web.Middleware;
 using Web.Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,10 +14,15 @@ builder.Services.AddSwaggerGen();
 
 //Services 
 builder.Services.AddApplicationServices();
+builder.Services.AddSwaggerWithJwt();
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddCustomCors(builder.Configuration);
+
+
 var app = builder.Build();
+
+app.UseMiddleware<DbContextMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

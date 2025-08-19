@@ -1,28 +1,31 @@
+// src/screens/UserListScreen.tsx
+
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useEffect, useState } from "react";
-import { userService } from "../../api/services/userService";
-import { IUser } from "../../api/types/IUser";
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  StyleSheet,
-  View,
-  Text,
-} from "react-native";
-import FloatingActionButton from "../../components/FloatingActionButton";
-import GenericCard from "../../components/GenericCard";
-import { UserParamsList } from "../../navigations/types";
-import Loader from "../../components/Loader";
-export default function UserListScreen() {
-  const [users, setUsers] = useState<IUser[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const isFocused = useIsFocused(); // ✅ detecta si la pantalla está activa
+import React, { useCallback, useEffect, useState } from "react";
+import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { Provider } from "react-native-paper";
 
+import { userService } from "../../api/services/userService";
+import { UserDTO } from "../../api/types/IUser";
+import DeleteConfirmationDialog from "../../components/util/DeleteConfirmationDialog";
+import FloatingActionButton from "../../components/generic-buttons/FloatingActionButton";
+import GenericCard from "../../components/generic-card/GenericCard";
+import Loader from "../../components/util/Loader";
+import { UserParamsList } from "../../navigations/types";
+
+export default function UserListScreen() {
+  const [users, setUsers] = useState<UserDTO[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<UserDTO | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const isFocused = useIsFocused();
   const navigation = useNavigation<NativeStackNavigationProp<UserParamsList>>();
 
-  const loadRoles = async () => {
+  const loadUsers = async () => {
     try {
       const data = await userService.getAll();
       setUsers(data);
@@ -30,35 +33,43 @@ export default function UserListScreen() {
       console.error("Error:", error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
   useEffect(() => {
     if (isFocused) {
       setLoading(true);
-      loadRoles();
+      loadUsers();
     }
   }, [isFocused]);
-  const handleEdit = (user: IUser) => {
-    console.log("Editar User:", user);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    loadUsers();
+  }, []);
+
+  const showDeleteDialog = (user: UserDTO) => {
+    setSelectedUser(user);
+    setDialogVisible(true);
   };
 
-  const handleDelete = (user: IUser) => {
-    Alert.alert("¿Eliminar rol?", `¿Eliminar "${user.name}"?`, [
-      { text: "Cancelar", style: "cancel" },
-      {
-        text: "Eliminar",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            await userService.delete(user.id);
-            loadRoles();
-          } catch (error) {
-            console.error("Error al eliminar:", error);
-          }
-        },
-      },
-    ]);
+  const hideDeleteDialog = () => {
+    setDialogVisible(false);
+    setSelectedUser(null);
+  };
+
+  const confirmDelete = async () => {
+    if (selectedUser) {
+      try {
+        await userService.delete(selectedUser.id);
+        loadUsers();
+      } catch (error) {
+        console.error("Error al eliminar:", error);
+      } finally {
+        hideDeleteDialog();
+      }
+    }
   };
 
   if (loading) {
@@ -66,30 +77,44 @@ export default function UserListScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>List Users</Text>
-      <FlatList
-        data={users}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <GenericCard
-            title={item.name}
-            subtitle={item.email}
-            imageUrl={require("../../../assets/img/user.png")}
-            onEdit={() => navigation.navigate("UserUpdate", { id: item.id })}
-            onDelete={() => handleDelete(item)}
-          />
-        )}
-      />
+    <Provider>
+      <View style={styles.container}>
+        <Text style={styles.title}>List Users</Text>
 
-      {/* Boton flotante */}
+        <FlatList
+          data={users}
+          keyExtractor={(item) => item.id.toString()}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          renderItem={({ item }) => (
+            <GenericCard
+              title={item.name}
+              subtitle={item.email}
+              imageUrl={require("../../../assets/img/user.png")}
+              onEdit={() => navigation.navigate("UserUpdate", { id: item.id })}
+              onDelete={() => showDeleteDialog(item)}
+            />
+          )}
+        />
 
-      <FloatingActionButton
-        onPress={() => navigation.navigate("UserRegister")}
-        iconName="add"
-        backgroundColor="#4a90e2"
+        <FloatingActionButton
+          onPress={() => navigation.navigate("UserRegister")}
+          iconName="add"
+          backgroundColor="#4a90e2"
+        />
+      </View>
+
+      {/* Modal de confirmación */}
+      <DeleteConfirmationDialog
+        visible={dialogVisible}
+        title="Delete user?"
+        description="Are you sure you want to delete"
+        itemName={selectedUser?.name}
+        onCancel={hideDeleteDialog}
+        onConfirm={confirmDelete}
       />
-    </View>
+    </Provider>
   );
 }
 

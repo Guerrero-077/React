@@ -1,8 +1,9 @@
-﻿using Data.Interfaces;
+﻿using Data.Interfaces.IDataImplement;
 using Data.Repositoy;
-using Entity.Contexts;
-using Entity.Models;
+using Entity.Domain.Models.Implements;
+using Entity.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace Data.Services
 {
@@ -12,27 +13,55 @@ namespace Data.Services
         {
         }
 
-        public async Task<IEnumerable<RolUser>> GetAllJoinAsync()
+        public async Task<RolUser> AsignateUserRTo(int userId)
         {
-            return await _dbSet
+            var rolUser = new RolUser
+            {
+                userId = userId,
+                rolId = 2,
+                active = true,
+                is_deleted = false
+            };
+
+            _context.rolUsers.Add(rolUser);
+            await _context.SaveChangesAsync();
+
+            return rolUser;
+        }
+
+
+        public override async Task<IEnumerable<RolUser>> GetAllAsync()
+        {
+            return await _context.Set<RolUser>()
                         .Include(u => u.rol)
                         .Include(u => u.user)
+                        .Where(u => u.is_deleted == false)
                         .ToListAsync();
         }
 
-        public async Task<RolUser?> GetByIdJoinAsync(int id)
+        public override async Task<IEnumerable<RolUser>> GetDeletes()
         {
-            return await _dbSet
+            return await _context.Set<RolUser>()
+                        .Include(u => u.rol)
+                        .Include(u => u.user)
+                        .Where(u => u.is_deleted == true)
+                        .ToListAsync();
+        }
+
+
+        public override async Task<RolUser?> GetByIdAsync(int id)
+        {
+            return await _context.Set<RolUser>()
                       .Include(u => u.rol)
                       .Include(u => u.user)
                       .Where(u => u.id == id)
-                      .FirstOrDefaultAsync();   
+                      .FirstOrDefaultAsync(u => u.is_deleted == false);   
 
         }
 
         public async Task<IEnumerable<string>> GetJoinRolesAsync(int idUser)
         {
-            var rolAsignated = await _dbSet
+            var rolAsignated = await _context.Set<RolUser>()
                                .Include(ru => ru.rol)
                                .Include(ru => ru.user)
                                .Where(ru => ru.userId == idUser)

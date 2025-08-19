@@ -1,13 +1,20 @@
+// src/screens/UserUpdateScreen.tsx
+
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useEffect, useState } from "react";
-import { Alert, Button, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { StyleSheet, Text, View, Alert } from "react-native";
 import { userService } from "../../api/services/userService";
-import { IUser } from "../../api/types/IUser";
-import Loader from "../../components/Loader";
+import { UpdateUserDTO } from "../../api/types/IUser";
+import GenericForm from "../../components/generic-form/GenericForm";
+import Loader from "../../components/util/Loader";
+import { buildUserFields } from "../../constants/Form/userFormFields";
 import { UserParamsList } from "../../navigations/types";
-import GenericForm from "../../components/GenericForm";
-import { userFields } from "../../constants/Form/userFormFields";
+import { showToast } from "../../components/util/toastHelper";
+import FormActionButtons from "../../components/generic-buttons/FormActionButtons";
+import { IPerson } from "../../api/types/IPerson";
+import { personService } from "../../api/services/personService";
+import { FieldDefinition } from "../../components/types/FieldDefinition";
 
 type UpdateRouteProp = RouteProp<UserParamsList, "UserUpdate">;
 type NavigationProp = NativeStackNavigationProp<UserParamsList>;
@@ -17,44 +24,92 @@ const UserUpdateScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const { id } = route.params;
 
-  const [form, setForm] = useState<IUser>({
-    id: 0,
+  const [form, setForm] = useState<UpdateUserDTO>({
+    id: id,
     name: "",
     email: "",
     password: "",
+    personId: 0,
   });
+
+  const [persons, setPersons] = useState<IPerson[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const handleChange = (field: keyof IUser, value: string) => {
-    setForm({ ...form, [field]: value });
-  };
-
   useEffect(() => {
-    const loadUser = async () => {
+    (async () => {
       try {
-        const data = await userService.getById(id); // ✅ tu servicio debe tener esto
-        setForm(data);
-      } catch (error) {
-        console.error("Error al cargar user:", error);
-        Alert.alert("Error", "No se pudo cargar el user");
+        const [userData, personsData] = await Promise.all([
+          userService.getById(id),
+          personService.getAll(),
+        ]);
+        setForm({ ...userData, password: "" });
+        setPersons(personsData);
+      } catch (err) {
+        console.error("Error loading data", err);
+        Alert.alert("Error", "Could not load data");
       } finally {
         setLoading(false);
       }
-    };
-
-    loadUser();
+    })();
   }, [id]);
 
-  const handleUpdate = async () => {
-    try {
-      await userService.update(form); // envías el objeto entero
-      Alert.alert("Éxito", "user actualizado correctamente", [
-        { text: "OK", onPress: () => navigation.navigate("UserList") },
-      ]);
-    } catch (error) {
-      console.error("Error al actualizar user:", error);
-      Alert.alert("Error", "No se pudo actualizar el user");
+  const fields = useMemo(() => buildUserFields(persons), [persons]);
+
+  const handleChange = (key: keyof UpdateUserDTO, value: any) => {
+    setForm((prev) => ({
+      ...prev,
+      [key]: typeof value === "string" && key !== 'personId' ? value : Number(value),
+    }));
+  };
+
+  const validateForm = (): boolean => {
+    for (const field of fields as FieldDefinition<UpdateUserDTO>[]) {
+      const value = form[field.key];
+
+      if (field.required && !value && field.key !== 'password') {
+        showToast.validation(field.label);
+        return false;
+      }
+
+      if (
+        field.type === "email" &&
+        value &&
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value))
+      ) {
+        showToast.error(
+          "Invalid email",
+          "You must enter a valid email address."
+        );
+        return false;
+      }
+
+      if (field.key === "password" && value && String(value).length < 6) {
+        showToast.error(
+          "Very short password",
+          "The password must be at least 6 characters."
+        );
+        return false;
+      }
     }
+
+    return true;
+  };
+
+  const handleUpdate = async () => {
+    if (!validateForm()) return;
+
+    try {
+      await userService.update(form.id, form);
+      showToast.success("User updated", "The user was updated successfully.");
+      navigation.navigate("UserList");
+    } catch (error) {
+      console.error("Error updating user:", error);
+      showToast.error("Update failed", "The user could not be updated.");
+    }
+  };
+
+  const handleCancel = () => {
+    navigation.goBack();
   };
 
   if (loading) {
@@ -64,9 +119,15 @@ const UserUpdateScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Update User</Text>
-      <GenericForm form={form} fields={userFields} onChange={handleChange} />
 
-      <Button title="Update" onPress={handleUpdate} />
+      <GenericForm form={form} fields={fields} onChange={handleChange} />
+
+      <FormActionButtons
+        onSubmit={handleUpdate}
+        onCancel={handleCancel}
+        submitLabel="Update"
+        cancelLabel="Cancel"
+      />
     </View>
   );
 };
@@ -74,6 +135,7 @@ const UserUpdateScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20 },
   title: { fontSize: 28, textAlign: "center", marginBottom: 20 },
+  buttonGroup: { marginTop: 20 },
 });
 
 export default UserUpdateScreen;

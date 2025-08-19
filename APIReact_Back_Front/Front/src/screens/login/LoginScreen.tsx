@@ -10,7 +10,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 
-import GenericForm from "../../components/GenericForm";
+import GenericForm from "../../components/generic-form/GenericForm";
 import { loginFields } from "../../constants/Form/loginFormFields";
 import { ILogin } from "../../api/types/ILogin";
 import { authService } from "../../api/services/loginService";
