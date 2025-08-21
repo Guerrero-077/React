@@ -72,7 +72,7 @@ const PermissionRegisterScreen = () => {
       <FormActionButtons
         onSubmit={handleCreate}
         onCancel={() => navigation.goBack()}
-        submitLabel="Update"
+        submitLabel="Create"
         cancelLabel="Cancel"
       />
     </View>

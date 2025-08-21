@@ -37,6 +37,17 @@ export const PersonRegisterScreen = () => {
         showToast.validation(field.label);
         return false;
       }
+
+      if (field.key === "phoneNumber") {
+        const phoneNumber = String(value);
+        if (!/^3\d{9}$/.test(phoneNumber)) {
+          showToast.error(
+            "Invalid phone number",
+            "The phone number must start with 3 and have 10 digits."
+          );
+          return false;
+        }
+      }
     }
     return true;
   };

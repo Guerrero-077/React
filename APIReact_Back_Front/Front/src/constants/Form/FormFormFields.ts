@@ -13,7 +13,7 @@ export const FormFields: FieldDefinition<IForm>[] = [
     {
         key: "description",
         label: "Description",
-        type: "multiline", // Usamos "multiline" en lugar de "textarea"
+        type: "multiline",
         placeholder: "Enter a detailed description of the Form",
         required: true,
         multiline: true,

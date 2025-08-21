@@ -1,12 +1,12 @@
 import { httpClient } from "../interceptor/httpClient";
-import { CreateUserDTO, UserDTO } from "../types/IUser";
+import { CreateUserDTO, UpdateUserDTO, UserDTO } from "../types/IUser";
 import { createGenericService } from "./generic-service/genericService";
 
 
 export const userService =
 {
 
-    ...createGenericService<UserDTO, CreateUserDTO>("/users"),
+    ...createGenericService<UserDTO, CreateUserDTO, UpdateUserDTO>("/users"),
 
         // Método extra:
         getAllDynamic: async (): Promise<UserDTO[]> => {

@@ -10,6 +10,7 @@ import GenericForm from "../../components/generic-form/GenericForm";
 import { showToast } from "../../components/util/toastHelper";
 import { personFields } from "../../constants/Form/PersonFormFields";
 import { personParamsList } from "../../navigations/types";
+import { FieldDefinition } from "../../components/types/FieldDefinition";
 
 type UpdateRouteProp = RouteProp<personParamsList, "PersonUpdate">;
 type NavigationProp = NativeStackNavigationProp<personParamsList>;
@@ -50,12 +51,23 @@ export const PersonUpdateScreen = () => {
   }, [id]);
 
   const validateRol = (): boolean => {
-    if (persons.phoneNumber.length < 10) {
-      showToast.error(
-        "Validation failed",
-        "Phone number must be at least 10 digits."
-      );
-      return false;
+    for (const field of personFields as FieldDefinition<IPerson>[]) {
+      const value = String(persons[field.key] ?? "").trim();
+      if (field.required && !value) {
+        showToast.validation(field.label);
+        return false;
+      }
+
+      if (field.key === "phoneNumber") {
+        const phoneNumber = String(value);
+        if (!/^3\d{9}$/.test(phoneNumber)) {
+          showToast.error(
+            "Invalid phone number",
+            "The phone number must start with 3 and have 10 digits.."
+          );
+          return false;
+        }
+      }
     }
     return true;
   };

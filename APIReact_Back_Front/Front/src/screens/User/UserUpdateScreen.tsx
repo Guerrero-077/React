@@ -1,5 +1,3 @@
-// src/screens/UserUpdateScreen.tsx
-
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect, useMemo, useState } from "react";
@@ -8,7 +6,7 @@ import { userService } from "../../api/services/userService";
 import { UpdateUserDTO } from "../../api/types/IUser";
 import GenericForm from "../../components/generic-form/GenericForm";
 import Loader from "../../components/util/Loader";
-import { buildUserFields } from "../../constants/Form/userFormFields";
+import { buildUpdateUserFields } from "../../constants/Form/userFormFields";
 import { UserParamsList } from "../../navigations/types";
 import { showToast } from "../../components/util/toastHelper";
 import FormActionButtons from "../../components/generic-buttons/FormActionButtons";
@@ -28,7 +26,6 @@ const UserUpdateScreen = () => {
     id: id,
     name: "",
     email: "",
-    password: "",
     personId: 0,
   });
 
@@ -42,7 +39,7 @@ const UserUpdateScreen = () => {
           userService.getById(id),
           personService.getAll(),
         ]);
-        setForm({ ...userData, password: "" });
+        setForm(userData);
         setPersons(personsData);
       } catch (err) {
         console.error("Error loading data", err);
@@ -53,7 +50,7 @@ const UserUpdateScreen = () => {
     })();
   }, [id]);
 
-  const fields = useMemo(() => buildUserFields(persons), [persons]);
+  const fields = useMemo(() => buildUpdateUserFields(persons), [persons]);
 
   const handleChange = (key: keyof UpdateUserDTO, value: any) => {
     setForm((prev) => ({
@@ -66,7 +63,7 @@ const UserUpdateScreen = () => {
     for (const field of fields as FieldDefinition<UpdateUserDTO>[]) {
       const value = form[field.key];
 
-      if (field.required && !value && field.key !== 'password') {
+      if (field.required && !value) {
         showToast.validation(field.label);
         return false;
       }
@@ -74,19 +71,11 @@ const UserUpdateScreen = () => {
       if (
         field.type === "email" &&
         value &&
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value))
+        !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(String(value))
       ) {
         showToast.error(
           "Invalid email",
           "You must enter a valid email address."
-        );
-        return false;
-      }
-
-      if (field.key === "password" && value && String(value).length < 6) {
-        showToast.error(
-          "Very short password",
-          "The password must be at least 6 characters."
         );
         return false;
       }
@@ -120,7 +109,7 @@ const UserUpdateScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Update User</Text>
 
-      <GenericForm form={form} fields={fields} onChange={handleChange} />
+      <GenericForm<UpdateUserDTO> form={form} fields={fields} onChange={handleChange} />
 
       <FormActionButtons
         onSubmit={handleUpdate}
@@ -139,3 +128,6 @@ const styles = StyleSheet.create({
 });
 
 export default UserUpdateScreen;
+
+
+

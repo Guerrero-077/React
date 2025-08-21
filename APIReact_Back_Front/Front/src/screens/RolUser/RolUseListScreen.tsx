@@ -84,7 +84,7 @@ const RolUserListScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Rol Form Permission List</Text>
+      <Text style={styles.title}>Rol User List</Text>
       <FlatList
         data={rolUser}
         keyExtractor={(item) => item.id.toString()}

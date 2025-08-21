@@ -2,7 +2,7 @@ import { httpClient } from "../../interceptor/httpClient";
 
 
 
-export const createGenericService = <TList, TCreate>(resource: string) => ({
+export const createGenericService = <TList, TCreate, TUpdate = TCreate>(resource: string) => ({
     getAll: async (): Promise<TList[]> => {
         return await httpClient.get<TList[]>(`${resource}?GetAllType=0`);
     },
@@ -15,7 +15,7 @@ export const createGenericService = <TList, TCreate>(resource: string) => ({
         return await httpClient.post<TList>(resource, data);
     },
 
-    update: async (id: number, data: TCreate): Promise<TList> => {
+    update: async (id: number, data: TUpdate): Promise<TList> => {
         return await httpClient.put<TList>(`${resource}/${id}`, data);
     },
 

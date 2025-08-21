@@ -7,7 +7,7 @@ namespace Entity.Domain.Models.Implements
     public class User : BaseModel
     {
         public string name { get; set; }
-        public string? password { get; set; 
+        public string? password { get; set; } 
         public string email { get; set; }
 
 

@@ -67,12 +67,43 @@ const UserRegisterScreen = () => {
         return false;
       }
 
-      if (field.key === "password" && String(value).length < 6) {
-        showToast.error(
-          "Very short password",
-          "The password must be at least 6 characters."
-        );
-        return false;
+      if (field.key === "password") {
+        const password = String(value);
+        if (password.length < 8) {
+          showToast.error(
+            "Very short password",
+            "The password must be at least 8 characters."
+          );
+          return false;
+        }
+        if (!/[A-Z]/.test(password)) {
+          showToast.error(
+            "Invalid password",
+            "The password must contain at least one capital letter."
+          );
+          return false;
+        }
+        if (!/[a-z]/.test(password)) {
+          showToast.error(
+            "Invalid password",
+            "The password must contain at least one lowercase letter."
+          );
+          return false;
+        }
+        if (!/\d/.test(password)) {
+          showToast.error(
+            "Invalid password",
+            "The password must contain at least one number."
+          );
+          return false;
+        }
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+          showToast.error(
+            "Invalid password",
+            "The password must contain at least one special character."
+          );
+          return false;
+        }
       }
     }
 

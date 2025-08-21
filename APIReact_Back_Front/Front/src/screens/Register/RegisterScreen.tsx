@@ -40,8 +40,23 @@ export default function RegisterScreen() {
       return "Please enter a valid email address.";
     }
 
-    if (!password || password.length < 6) {
-      return "Password must be at least 6 characters long.";
+    if (!password) {
+      return "Password is required.";
+    }
+    if (password.length < 8) {
+      return "The password must be at least 8 characters.";
+    }
+    if (!/[A-Z]/.test(password)) {
+      return "The password must contain at least one capital letter.";
+    }
+    if (!/[a-z]/.test(password)) {
+      return "The password must contain at least one lowercase letter.";
+    }
+    if (!/\d/.test(password)) {
+      return "The password must contain at least one number.";
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      return "The password must contain at least one special character.";
     }
 
     if (password !== confirmPassword) {
@@ -110,7 +125,7 @@ export default function RegisterScreen() {
           onChange={handleChange}
         />
 
-        <Button title="Registrarse" onPress={handleRegister} />
+        <Button title="Register" onPress={handleRegister} />
 
         <TouchableOpacity onPress={goToLogin} style={styles.linkContainer}>
           <Text style={styles.linkText}>
